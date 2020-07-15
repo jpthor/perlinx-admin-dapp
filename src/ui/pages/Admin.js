@@ -47,7 +47,7 @@ const Overview = (props) => {
     const [arrayPools, setArrayPools] = useState([])
     const [arrayPoolBalances, setArrayPoolBalances] = useState([])
     const [arrayPoolListed, setArrayPoolListed] = useState([])
-    const [arrayPoolFactor, setArrayPoolFactor] = useState([])
+    const [arrayPoolWeight, setArrayPoolWeight] = useState([])
     const [perlBalance, setPerlBalance] = useState(null)
     const [perlinXData, setPerlinXData] = useState({
         "rewards": "",
@@ -72,7 +72,7 @@ const Overview = (props) => {
         let currentWeek = await contract.methods.currentWeek().call()
         let poolCount = await contract.methods.poolCount().call()
         let memberCount = await contract.methods.memberCount().call()
-        let adminAddr = await contract.methods.perlinAdmin().call()
+        let adminAddr = await contract.methods.arrayAdmins('0').call()
         let perlinAddr = await contract.methods.PERL().call()
 
         let contractPerl = getTokenContract(PERL_ADDR)
@@ -94,7 +94,7 @@ const Overview = (props) => {
         let arrayPools = []
         let arrayPoolBalances = []
         let arrayPoolListed = []
-        let arrayPoolFactor = []
+        let arrayPoolWeight = []
         for (let i = 0; i < poolCount; i++) {
             let pool = await contract.methods.arrayPerlinPools(i).call()
             arrayPools.push(pool)
@@ -103,13 +103,13 @@ const Overview = (props) => {
             arrayPoolBalances.push(convertFromWei(balance))
             let listed = await contract.methods.poolIsListed(pool).call()
             arrayPoolListed.push(listed ? "true" : "false")
-            let factor = await contract.methods.poolFactor(pool).call()
-            arrayPoolFactor.push(factor)
+            let factor = await contract.methods.poolWeight(pool).call()
+            arrayPoolWeight.push(factor)
         }
         setArrayPools(arrayPools)
         setArrayPoolBalances(arrayPoolBalances)
         setArrayPoolListed(arrayPoolListed)
-        setArrayPoolFactor(arrayPoolFactor)
+        setArrayPoolWeight(arrayPoolWeight)
         context.setContext({ 'arrayPools': arrayPools })
     }
 
@@ -148,11 +148,11 @@ const Overview = (props) => {
                     <Row>
                         <Col xs={24} lg={12} style={colStyles}>
                             <H2>APPROVED POOLS ({perlinXData?.poolCount})</H2><br />
-                            <Text>{arrayPools[0]}</Text>&nbsp;<Text>({(arrayPoolBalances[0])})</Text>&nbsp;<Text>{arrayPoolListed[0]}</Text>&nbsp;<Text>{arrayPoolFactor[0]}</Text>
+                            <Text>{arrayPools[0]}</Text>&nbsp;<Text>({(arrayPoolBalances[0])})</Text>&nbsp;<Text>{arrayPoolListed[0]}</Text>&nbsp;<Text>{arrayPoolWeight[0]}</Text>
                             <br />
-                            <Text>{arrayPools[1]}</Text>&nbsp;<Text>({(arrayPoolBalances[1])})</Text>&nbsp;<Text>{arrayPoolListed[1]}</Text>&nbsp;<Text>{arrayPoolFactor[1]}</Text>
+                            <Text>{arrayPools[1]}</Text>&nbsp;<Text>({(arrayPoolBalances[1])})</Text>&nbsp;<Text>{arrayPoolListed[1]}</Text>&nbsp;<Text>{arrayPoolWeight[1]}</Text>
                             <br />
-                            <Text>{arrayPools[2]}</Text>&nbsp;<Text>({(arrayPoolBalances[2])})</Text>&nbsp;<Text>{arrayPoolListed[2]}</Text>&nbsp;<Text>{arrayPoolFactor[2]}</Text>
+                            <Text>{arrayPools[2]}</Text>&nbsp;<Text>({(arrayPoolBalances[2])})</Text>&nbsp;<Text>{arrayPoolListed[2]}</Text>&nbsp;<Text>{arrayPoolWeight[2]}</Text>
                             <br />
                         </Col>
                     </Row>
@@ -191,7 +191,7 @@ const Rewards = (props) => {
         let currentWeek = await contract.methods.currentWeek().call()
         let poolCount = await contract.methods.poolCount().call()
         let memberCount = await contract.methods.memberCount().call()
-        let adminAddr = await contract.methods.perlinAdmin().call()
+        let adminAddr = contract.methods.arrayAdmins('0').call()
         let perlinAddr = await contract.methods.PERL().call()
 
         let contractPerl = getTokenContract(PERL_ADDR)
@@ -215,7 +215,7 @@ const Rewards = (props) => {
         let arrayPools = []
         let arrayPoolBalances = []
         let arrayPoolListed = []
-        let arrayPoolFactor = []
+        let arrayPoolWeight = []
         for (let i = 0; i < poolCount; i++) {
             let pool = await contract.methods.arrayPerlinPools(i).call()
             arrayPools.push(pool)
@@ -224,8 +224,8 @@ const Rewards = (props) => {
             arrayPoolBalances.push(convertFromWei(balance))
             let listed = await contract.methods.poolIsListed(pool).call()
             arrayPoolListed.push(listed ? "true" : "false")
-            let factor = await contract.methods.poolFactor(pool).call()
-            arrayPoolFactor.push(factor)
+            let factor = await contract.methods.poolWeight(pool).call()
+            arrayPoolWeight.push(factor)
         }
         context.setContext({ 'arrayPools': arrayPools })
     }
